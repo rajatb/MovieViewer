@@ -30,6 +30,9 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //Custom Navigation Controller
+        self.navigationItem.title = "Flickr"
 
         // Do any additional setup after loading the view.
         tableView.dataSource = self
@@ -79,9 +82,11 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
                 MBProgressHUD.hide(for: self.view, animated: true)
                 
                 if let err = error  {
+                   self.refreshControl.endRefreshing()
                    self.showNetworkErrorMsg()
                 } else {
                     if let data = dataOrNil {
+                        print("*****about to get data****")
                         self.networkErrorMsg.isHidden = true
                         
                         let responseDict = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
@@ -115,9 +120,12 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         let basePath = "https://image.tmdb.org/t/p/w342"
         
         
+        
 
         cell.lblTitle.text = title
         cell.lblBody.text = overview
+        
+        // fade in the poster
         
         if let posterPath = movie["poster_path"] as? String {
             
@@ -126,14 +134,12 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
             cell.postView.setImageWith(imageRequest, placeholderImage: nil, success: { (imageRequest, response, image) in
                 
                 if response != nil {
-                    print("Image was NOT cached, fade in image")
                     cell.postView.alpha = 0.0
                     cell.postView.image = image
                     UIView.animate(withDuration: 0.3, animations: { () -> Void in
                         cell.postView.alpha = 1.0
                     })
                 } else {
-                    print("Image was cached so just update the image")
                     cell.postView.image = image
                 }
             }, failure: { (imageRequest, response, error) in
@@ -142,7 +148,9 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
             //cell.postView.setImageWith(imageUrl!)
         }
         
-        print("Row \(indexPath.row)")
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = UIColor("#f7f7f7")
+        cell.selectedBackgroundView = backgroundView
         
         return cell
     }

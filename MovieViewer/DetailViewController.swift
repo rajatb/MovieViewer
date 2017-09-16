@@ -20,12 +20,15 @@ class DetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        //Customize Navigation Controller
         
         scrollView.contentSize = CGSize(width: scrollView.frame.width, height: infoView.frame.origin.y +
         infoView.frame.height)
         
         let title = movie["title"] as? String
         let overview = movie["overview"]
+        
+         self.navigationItem.title = title
     
         
         labelTitle.text = title
